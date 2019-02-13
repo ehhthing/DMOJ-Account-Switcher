@@ -1,0 +1,21 @@
+#users {
+	width: 300px;
+	font-size: 13px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.user {
+	width: 100%;
+	height: 30px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: whitesmoke;
+	border: 1px lightgray solid;
+	cursor: pointer;
+}
+
+.user:not(:first-child) {
+   margin-top: 10px;
+}
