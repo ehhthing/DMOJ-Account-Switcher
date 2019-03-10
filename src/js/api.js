@@ -1,20 +1,33 @@
 function promisify(api) {
 	return function(param) {
 		return new Promise(function(resolve, reject) {
+			let cb = function(res) {
+				if (res instanceof Error) {
+					return reject(res);
+				}
+				return resolve(res);
+			}
 			if (param) {
-				api(param, function(res) {
-					if (res instanceof Error) {
-						return reject(res);
-					}
-					return resolve(res);
-				})
+				api(param, cb)
 			} else {
-				api(function(res) {
-					if (res instanceof Error) {
-						return reject(res);
-					}
-					return resolve(res);
-				})
+				api(cb)
+			}
+		})
+	}
+}
+
+// must have custom promisify for storage object or chrome will complain about "must be on an instance of..."
+function storagePromisify(action) {
+	return function(key) {
+		return new Promise(function(resolve) {
+			let cb = function(data) {
+				if (data) return resolve(data);
+				return resolve();
+			}
+			if (key) {
+				chrome.storage.local[action](key, cb)
+			} else {
+				chrome.storage.local[action](cb)
 			}
 		})
 	}
@@ -46,7 +59,7 @@ window.api = {
 			value: value
 		})
 	},
-	getStorage: promisify(chrome.storage.local.get),
-	setStorage: promisify(chrome.storage.local.set),
-	clearStorage: promisify(chrome.storage.local.clear)
+	getStorage: storagePromisify("get"),
+	setStorage: storagePromisify("set"),
+	clearStorage: storagePromisify("clear")
 }

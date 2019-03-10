@@ -19,7 +19,8 @@ async function getToken() {
 }
 
 async function getUsers() {
-	return (await api.getStorage("users")).users || {};
+	let users = await api.getStorage({"users": {}});
+	return users.users;
 }
 
 async function addUser(name, token) {
